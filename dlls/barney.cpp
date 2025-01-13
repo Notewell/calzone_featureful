@@ -43,6 +43,22 @@
 #define	BARNEY_BODY_GUNDRAWN		1
 #define BARNEY_BODY_GUNGONE		2
 
+#define BARNEY_HAT_GROUP 3
+
+// Head group
+#define BARNEY_HEAD_GROUP				2
+enum
+{
+	BARNEY_HEAD_BARNEY,
+	BARNEY_HEAD_VIC,
+	BARNEY_HEAD_GEORGE,
+	BARNEY_HEAD_TEDDY,
+	BARNEY_HEAD_ROY,
+	BARNEY_HEAD_JIM,
+	BARNEY_HEAD_ARTHUR,
+	BARNEY_HEAD_HARRISON,
+};
+
 class CBarney : public CTalkMonster
 {
 public:
@@ -90,6 +106,7 @@ public:
 
 	virtual void SetGunState(int gunState);
 	int bodystate;
+	int m_iHead;
 	CUSTOM_SCHEDULES
 
 protected:
@@ -105,6 +122,7 @@ TYPEDESCRIPTION	CBarney::m_SaveData[] =
 	DEFINE_FIELD( CBarney, m_fGunDrawn, FIELD_BOOLEAN ),
 	DEFINE_FIELD( CBarney, m_checkAttackTime, FIELD_TIME ),
 	DEFINE_FIELD( CBarney, m_lastAttackCheck, FIELD_BOOLEAN ),
+	DEFINE_FIELD( CBarney, m_iHead, FIELD_INTEGER),
 };
 
 IMPLEMENT_SAVERESTORE( CBarney, CTalkMonster )
@@ -390,17 +408,25 @@ void CBarney::SpawnImpl(const char* modelName, float health)
 
 void CBarney::Spawn()
 {
+
+
 	Precache();
 	SpawnImpl("models/barney.mdl", gSkillData.barneyHealth);
 	if (bodystate == -1) {
 		bodystate = RANDOM_LONG(BARNEY_BODY_GUNHOLSTERED, BARNEY_BODY_GUNDRAWN);
 	}
 	SetGunState(bodystate);
+
+	if (m_iHead == -1)
+		SetBodygroup(BARNEY_HEAD_GROUP, RANDOM_LONG(0, 8));
+	else
+		SetBodygroup(BARNEY_HEAD_GROUP, m_iHead);
 }
 
 void CBarney::SetGunState(int gunState)
 {
-	pev->body = gunState;
+	//pev->body = gunState;
+	SetBodygroup(1, gunState); //Hackhack - Use SetBodygroup so Barney's face doesn't change when he draws.
 	m_fGunDrawn = gunState == BARNEY_BODY_GUNDRAWN;
 }
 
@@ -466,6 +492,12 @@ void CBarney::KeyValue(KeyValueData *pkvd)
 	}
 	else
 		CTalkMonster::KeyValue( pkvd );
+
+	if (FStrEq(pkvd->szKeyName, "head"))
+	{
+		m_iHead = atoi(pkvd->szValue);
+		pkvd->fHandled = true;
+	}
 }
 
 //=========================================================
@@ -521,13 +553,14 @@ void CBarney::TraceAttack( entvars_t *pevInflictor, entvars_t *pevAttacker, floa
 
 void CBarney::OnDying()
 {
-	if( g_pGameRules->FMonsterCanDropWeapons(this) && !FBitSet(pev->spawnflags, SF_MONSTER_DONT_DROP_GUN) && pev->body < BARNEY_BODY_GUNGONE )
+	if( g_pGameRules->FMonsterCanDropWeapons(this) && !FBitSet(pev->spawnflags, SF_MONSTER_DONT_DROP_GUN) && GetBodygroup(1) < BARNEY_BODY_GUNGONE )
 	{
 		// drop the gun!
 		Vector vecGunPos;
 		Vector vecGunAngles;
 
-		pev->body = BARNEY_BODY_GUNGONE;
+		//pev->body = BARNEY_BODY_GUNGONE;
+		SetBodygroup(1, BARNEY_BODY_GUNGONE);
 
 		GetAttachment( 0, vecGunPos, vecGunAngles );
 
