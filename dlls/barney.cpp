@@ -65,6 +65,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	void KeyValue(KeyValueData* pkvd);
+	int GetDefaultVoicePitch();
 	void SetYawSpeed( void );
 	int DefaultISoundMask( void );
 	void BarneyFirePistol( const char* shotSoundScript, Bullet bullet );
@@ -106,7 +107,7 @@ public:
 
 	virtual void SetGunState(int gunState);
 	int bodystate;
-	int m_iHead;
+	int m_iHead = -1;  //Make the head random if spawning from console, monstermaker, or in an old BSP where it's not defined.
 	CUSTOM_SCHEDULES
 
 protected:
@@ -403,6 +404,12 @@ void CBarney::SpawnImpl(const char* modelName, float health)
 
 	m_afCapability = bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP;
 
+	//We do this here instead of in spawn so that we have the value ready for voice pitch in TalkMonsterInit()
+	if (m_iHead == -1)
+		SetBodygroup(BARNEY_HEAD_GROUP, RANDOM_LONG(0, 8));
+	else
+		SetBodygroup(BARNEY_HEAD_GROUP, m_iHead);
+
 	TalkMonsterInit();
 }
 
@@ -417,10 +424,7 @@ void CBarney::Spawn()
 	}
 	SetGunState(bodystate);
 
-	if (m_iHead == -1)
-		SetBodygroup(BARNEY_HEAD_GROUP, RANDOM_LONG(0, 8));
-	else
-		SetBodygroup(BARNEY_HEAD_GROUP, m_iHead);
+
 }
 
 void CBarney::SetGunState(int gunState)
@@ -428,6 +432,27 @@ void CBarney::SetGunState(int gunState)
 	//pev->body = gunState;
 	SetBodygroup(1, gunState); //Hackhack - Use SetBodygroup so Barney's face doesn't change when he draws.
 	m_fGunDrawn = gunState == BARNEY_BODY_GUNDRAWN;
+}
+
+
+int CBarney::GetDefaultVoicePitch()
+{
+	switch (GetBodygroup(BARNEY_HEAD_GROUP))
+	{
+	case BARNEY_HEAD_VIC:
+		return 92;
+	case BARNEY_HEAD_GEORGE:
+		return 102;
+	case BARNEY_HEAD_TEDDY:
+		return 104;
+	case BARNEY_HEAD_ROY:
+		return 96;
+	case BARNEY_HEAD_JIM:
+		return 86;
+	default:
+		return 100;
+	
+	}
 }
 
 //=========================================================
@@ -685,6 +710,8 @@ public:
 
 	const char* getPos(int pos) const;
 	static const char *m_szPoses[3];
+	int m_iHead;
+	void KeyValue(KeyValueData* pkvd);
 };
 
 const char *CDeadBarney::m_szPoses[] = { "lying_on_back", "lying_on_side", "lying_on_stomach" };
@@ -696,6 +723,15 @@ const char* CDeadBarney::getPos(int pos) const
 
 LINK_ENTITY_TO_CLASS( monster_barney_dead, CDeadBarney )
 
+void CDeadBarney::KeyValue(KeyValueData* pkvd)
+{
+	if (FStrEq(pkvd->szKeyName, "head"))
+	{
+		m_iHead = atoi(pkvd->szValue);
+		pkvd->fHandled = true;
+	}
+}
+
 //=========================================================
 // ********** DeadBarney SPAWN **********
 //=========================================================
@@ -703,6 +739,11 @@ void CDeadBarney::Spawn()
 {
 	SpawnHelper();
 	MonsterInitDead();
+
+	if (m_iHead == -1)
+		SetBodygroup(BARNEY_HEAD_GROUP, RANDOM_LONG(0, 8));
+	else
+		SetBodygroup(BARNEY_HEAD_GROUP, m_iHead);
 }
 
 #if FEATURE_OTIS
