@@ -337,6 +337,8 @@ bool ModFeatures::EnableWeapon(const char *name, bool enable)
 		WeaponNameAndId("shockrifle", WEAPON_SHOCKRIFLE),
 		WeaponNameAndId("penguin", WEAPON_PENGUIN),
 		WeaponNameAndId("uzi", WEAPON_UZI),
+		WeaponNameAndId("m16", WEAPON_M16),
+		WeaponNameAndId("m4", WEAPON_M4),
 	};
 
 	for (unsigned int i=0; i<ARRAYSIZE(knownWeapons); ++i)

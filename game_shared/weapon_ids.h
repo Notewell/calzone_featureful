@@ -34,4 +34,7 @@
 #define	WEAPON_PENGUIN			26
 #define WEAPON_UZI				27
 
+#define WEAPON_M16				28
+#define WEAPON_M4				29
+
 #endif

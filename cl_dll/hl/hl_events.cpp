@@ -86,5 +86,11 @@ void Game_HookEvents( void )
 #if FEATURE_UZI
 	gEngfuncs.pfnHookEvent( "events/uzi.sc", EV_FireUzi );
 #endif
+	gEngfuncs.pfnHookEvent("events/m16.sc", EV_FireM16);
+
+	gEngfuncs.pfnHookEvent("events/m4.sc", EV_FireM4);
+
+	gEngfuncs.pfnHookEvent("events/m42.sc", EV_FireM42);
+
 	gEngfuncs.pfnHookEvent( "events/vehicle.sc", EV_VehiclePitchAdjust );
 }

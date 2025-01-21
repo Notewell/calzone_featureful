@@ -63,6 +63,8 @@ void DeactivateSatchels( CBasePlayer *pOwner );
 #define GRAPPLE_WEIGHT			21
 #define MEDKIT_WEIGHT		-1
 #define UZI_WEIGHT			15
+#define M16_WEIGHT			15
+#define M4_WEIGHT			15
 
 // weapon clip/carry ammo capacities
 #define URANIUM_MAX_CARRY		100
@@ -108,6 +110,9 @@ void DeactivateSatchels( CBasePlayer *pOwner );
 #define SPORELAUNCHER_MAX_CLIP		5
 #define UZI_MAX_CLIP			32
 
+#define M16_MAX_CLIP			30
+#define M4_MAX_CLIP			30
+
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE			17
 #define PYTHON_DEFAULT_GIVE			6
@@ -137,6 +142,8 @@ void DeactivateSatchels( CBasePlayer *pOwner );
 #define SPORELAUNCHER_DEFAULT_GIVE	5
 #define MEDKIT_DEFAULT_GIVE			50
 #define UZI_DEFAULT_GIVE			UZI_MAX_CLIP
+#define M16_DEFAULT_GIVE			M16_MAX_CLIP
+#define M4_DEFAULT_GIVE				M4_MAX_CLIP
 
 // The amount of ammo given to a player by an ammo item.
 #define AMMO_URANIUMBOX_GIVE	20
@@ -154,6 +161,8 @@ void DeactivateSatchels( CBasePlayer *pOwner );
 #define AMMO_556CLIP_GIVE			50
 #define AMMO_762BOX_GIVE		5
 #define AMMO_SPORE_GIVE			1
+
+#define AMMO_556MAG_GIVE		30 //Magazine for 5.56mm rifles
 
 #define ITEM_FLAG_SELECTONEMPTY		1
 #define ITEM_FLAG_NOAUTORELOAD		2
@@ -859,6 +868,74 @@ public:
 	const char* MyWModel() { return NestModel(); }
 private:
 	unsigned short m_usSnarkFire;
+};
+
+//Calzone Weapons//
+
+//M16A1
+class CM16 : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int WeaponId() const override { return WEAPON_M16; }
+	bool GetItemInfo(ItemInfo* p) override;
+	bool AddToPlayer(CBasePlayer* pPlayer) override;
+
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	bool Deploy() override;
+	void Reload(void);
+	void WeaponIdle(void);
+	int m_iShell;
+
+	const char* MyWModel() { return "models/w_m16.mdl"; }
+
+private:
+	unsigned short m_usM16;
+	unsigned short m_usM162;
+};
+
+//M4 Carbine
+class CM4 : public CBasePlayerWeapon
+{
+public:
+#if !CLIENT_DLL
+	int		Save(CSave& save);
+	int		Restore(CRestore& restore);
+	static	TYPEDESCRIPTION m_SaveData[];
+#endif
+	#define M4_INBURST_DELAY 0.1f
+	#define M4_BETWEENBURST_DELAY 1.0f
+	void Spawn(void);
+	void Precache(void);
+	int WeaponId() const override { return WEAPON_M4; }
+	bool GetItemInfo(ItemInfo* p) override;
+	bool AddToPlayer(CBasePlayer* pPlayer) override;
+
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	bool Deploy() override;
+	void Reload(void);
+	void WeaponIdle(void);
+	int m_iShell;
+
+	const char* MyWModel() { return "models/w_m4.mdl"; }
+
+	enum BurstState
+	{
+		BURST_IDLE = -1,
+		BURST_TRIGGER = 1,
+		BURST_NUM_SHOTS = 3
+	};
+	int m_iBurstState = BURST_IDLE;
+	//int m_iLastShotTime = 0;
+
+private:
+	unsigned short m_usM4;
+	unsigned short m_usM42;
+	
+
 };
 
 #if FEATURE_DESERT_EAGLE

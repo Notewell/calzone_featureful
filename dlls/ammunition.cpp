@@ -384,3 +384,20 @@ class CM249AmmoClip : public CBasePlayerAmmo
 
 LINK_ENTITY_TO_CLASS(ammo_556, CM249AmmoClip)
 #endif
+
+class CAR15AmmoClip : public CBasePlayerAmmo
+{
+	const char* MyModel() {
+		return "models/w_m16clip.mdl";
+	}
+	int DefaultAmount() {
+		return AMMO_556MAG_GIVE;
+	}
+	const char* AmmoName() {
+		return "556";
+	}
+};
+
+LINK_ENTITY_TO_CLASS(ammo_m16clip, CAR15AmmoClip)
+LINK_ENTITY_TO_CLASS(ammo_m4clip, CAR15AmmoClip)
+LINK_ENTITY_TO_CLASS(ammo_ar15clip, CAR15AmmoClip)

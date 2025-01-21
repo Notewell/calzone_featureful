@@ -1303,7 +1303,7 @@ void CGamePlayerSettings::EquipPlayer(CBaseEntity *pPlayer)
 		SF_PLAYER_SETTINGS_DISPACER,
 		SF_PLAYER_SETTINGS_SHOCKRIFLE,
 		SF_PLAYER_SETTINGS_SPORELAUNCHER,
-		SF_PLAYER_SETTINGS_MEDKIT
+		SF_PLAYER_SETTINGS_MEDKIT,
 	};
 	const int weaponIds[ARRAYSIZE(weaponFlags)] = {
 		WEAPON_CROWBAR,
@@ -1362,9 +1362,9 @@ void CGamePlayerSettings::EquipPlayer(CBaseEntity *pPlayer)
 		WEAPON_NONE,
 #endif
 #if FEATURE_MEDKIT
-		WEAPON_MEDKIT
+		WEAPON_MEDKIT,
 #else
-		WEAPON_NONE
+		WEAPON_NONE,
 #endif
 	};
 

@@ -399,6 +399,13 @@ void W_Precache( CBaseEntity* pWorld )
 
 	// hornetgun
 	UTIL_PrecacheOtherWeapon( "weapon_hornetgun" );
+
+	//M16A1
+	UTIL_PrecacheOtherWeapon("weapon_m16");
+
+	//M4 (OG, not A1)
+	UTIL_PrecacheOtherWeapon("weapon_m4");
+
 #if FEATURE_MEDKIT
 	UTIL_PrecacheOtherWeapon( "weapon_medkit" );
 #endif
@@ -1671,5 +1678,13 @@ TYPEDESCRIPTION	CMedkit::m_SaveData[] =
 	DEFINE_FIELD( CMedkit, m_secondaryAttack, FIELD_BOOLEAN ),
 };
 
-IMPLEMENT_SAVERESTORE( CMedkit, CBasePlayerWeapon )
+IMPLEMENT_SAVERESTORE(CMedkit, CBasePlayerWeapon)
 #endif
+
+TYPEDESCRIPTION CM4::m_SaveData[] =
+{
+	DEFINE_FIELD(CM4, m_iBurstState, FIELD_INTEGER),
+};
+
+IMPLEMENT_SAVERESTORE (CM4, CBasePlayerWeapon)
+

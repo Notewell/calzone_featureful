@@ -43,10 +43,12 @@
 #define	BARNEY_BODY_GUNDRAWN		1
 #define BARNEY_BODY_GUNGONE		2
 
-#define BARNEY_HAT_GROUP 3
 
-// Head group
+
+// Bodygroups
+#define BARNEY_GUN_GROUP				1
 #define BARNEY_HEAD_GROUP				2
+#define BARNEY_HAT_GROUP				3
 enum
 {
 	BARNEY_HEAD_BARNEY,
@@ -430,7 +432,7 @@ void CBarney::Spawn()
 void CBarney::SetGunState(int gunState)
 {
 	//pev->body = gunState;
-	SetBodygroup(1, gunState); //Hackhack - Use SetBodygroup so Barney's face doesn't change when he draws.
+	SetBodygroup(BARNEY_GUN_GROUP, gunState); //Hackhack - Use SetBodygroup so Barney's face doesn't change when he draws.
 	m_fGunDrawn = gunState == BARNEY_BODY_GUNDRAWN;
 }
 
@@ -585,7 +587,7 @@ void CBarney::OnDying()
 		Vector vecGunAngles;
 
 		//pev->body = BARNEY_BODY_GUNGONE;
-		SetBodygroup(1, BARNEY_BODY_GUNGONE);
+		SetBodygroup(BARNEY_GUN_GROUP, BARNEY_BODY_GUNGONE);
 
 		GetAttachment( 0, vecGunPos, vecGunAngles );
 
@@ -723,13 +725,12 @@ const char* CDeadBarney::getPos(int pos) const
 
 LINK_ENTITY_TO_CLASS( monster_barney_dead, CDeadBarney )
 
-void CDeadBarney::KeyValue(KeyValueData* pkvd)
-{
+void CDeadBarney::KeyValue(KeyValueData* pkvd){
 	if (FStrEq(pkvd->szKeyName, "head"))
 	{
 		m_iHead = atoi(pkvd->szValue);
-		pkvd->fHandled = true;
 	}
+	CDeadMonster::KeyValue(pkvd);
 }
 
 //=========================================================
@@ -744,6 +745,10 @@ void CDeadBarney::Spawn()
 		SetBodygroup(BARNEY_HEAD_GROUP, RANDOM_LONG(0, 8));
 	else
 		SetBodygroup(BARNEY_HEAD_GROUP, m_iHead);
+
+	//Dead barneys shouldn't have guns, or helmets
+	SetBodygroup(BARNEY_GUN_GROUP, BARNEY_BODY_GUNGONE);
+	SetBodygroup(BARNEY_HAT_GROUP, 2);
 }
 
 #if FEATURE_OTIS

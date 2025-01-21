@@ -104,6 +104,8 @@ CMedkit g_Medkit;
 #if FEATURE_UZI
 CUzi g_Uzi;
 #endif
+CM16 g_M16;
+CM4 g_M4;
 
 /*
 ======================
@@ -548,6 +550,8 @@ void HUD_InitClientWeapons( void )
 #if FEATURE_UZI
 	HUD_PrepEntity( &g_Uzi, &player );
 #endif
+	HUD_PrepEntity(&g_M16, &player);
+	HUD_PrepEntity(&g_M4, &player);
 }
 
 /*
@@ -711,6 +715,12 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 			pWeapon = &g_Uzi;
 			break;
 #endif
+		case WEAPON_M16:
+			pWeapon = &g_M16;
+			break;
+		case WEAPON_M4:
+			pWeapon = &g_M4;
+			break;
 	}
 
 	// Store pointer to our destination entity_state_t so we can get our origin, etc. from it
